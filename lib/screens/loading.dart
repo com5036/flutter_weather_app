@@ -26,11 +26,12 @@ class _HomePageState extends State<HomePage> {
     DateTime currentTime = DateTime.now();
 
     if (currentTime.minute < 45){
+      print('test');
       currentTime = currentTime.subtract(Duration(hours: 1));
     }
 
     String baseDate =  DateFormat('yyyyMMdd').format(currentTime);
-    String baseTime =  DateFormat('HHmm').format(currentTime.subtract(Duration(hours: 1)));
+    String baseTime =  DateFormat('HHmm').format(currentTime);
     
     print(baseDate);
     print(baseTime);

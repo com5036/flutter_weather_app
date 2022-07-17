@@ -14,19 +14,19 @@ class _WeatherScreenState extends State<WeatherScreen> {
   List<String>? time = [];
   List<String>? temp = [];
   List<String>? rain = [];
-  /*
-  * 0~5 낙뢰
-  * 6~11 강수형태
-  * 12~17 강수량
-  * 18~23 온도
-  * 24~29 습도
-  * 30~35~41 바람
-  * ~ 풍향 풍속
-  */
+
 
   void update(dynamic weatherData) {
+    /*
+    * 0~5 낙뢰
+    * 6~11 강수형태
+    * 12~17 강수량
+    * 18~23 온도
+    * 24~29 습도
+    * 30~35~41 바람
+    * ~ 풍향 풍속
+    */
     cityName = '창원';
-
 
     for(int i = 12; i<18; i++){
       date?.add(weatherData['response']['body']['items']['item'][i]['fcstDate']);
