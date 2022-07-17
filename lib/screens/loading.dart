@@ -22,17 +22,22 @@ class _HomePageState extends State<HomePage> {
   void getLocation() async {
     MyLocation myLocation = MyLocation();
     await myLocation.getMyCurrentLocation();
-    const serviceKey = 'LwHK%2Fr4ZRuSOpu0laWBxJIyc58xVA1U4fuBGfL34L0Sp2VqSKjp8Tj7B8bVXyq3RVGUzGBOGUsE%2Frblfj3ujaQ%3D%3D';
-    String baseDate =  DateFormat('yyyyMMdd').format(DateTime.now());
-    String baseTime = '2200';
-    // String baseTime =  DateFormat('HHmm').format(DateTime.now());
+    const String serviceKey = 'LwHK%2Fr4ZRuSOpu0laWBxJIyc58xVA1U4fuBGfL34L0Sp2VqSKjp8Tj7B8bVXyq3RVGUzGBOGUsE%2Frblfj3ujaQ%3D%3D';
+    DateTime currentTime = DateTime.now();
 
+    if (currentTime.minute < 45){
+      currentTime = currentTime.subtract(Duration(hours: 1));
+    }
+
+    String baseDate =  DateFormat('yyyyMMdd').format(currentTime);
+    String baseTime =  DateFormat('HHmm').format(currentTime.subtract(Duration(hours: 1)));
+    
     print(baseDate);
     print(baseTime);
-
     print(myLocation.myLatitude);
     print(myLocation.myLongitude);
 
+    // 현재는 위도:90 경도:77 고정
     print('connect http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?ServiceKey=$serviceKey&pageNo=1&numOfRows=1000&dataType=JSON&base_date=$baseDate&base_time=$baseTime&nx=90&ny=77');
     Network network = Network(
       'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?ServiceKey=$serviceKey&pageNo=1&numOfRows=1000&dataType=JSON&base_date=$baseDate&base_time=$baseTime&nx=90&ny=77',
