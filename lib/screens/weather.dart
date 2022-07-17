@@ -10,6 +10,8 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen> {
   String? cityName;
+  List<String>? date = [];
+  List<String>? time = [];
   List<String>? temp = [];
   List<String>? rain = [];
   /*
@@ -27,6 +29,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
 
     for(int i = 12; i<18; i++){
+      date?.add(weatherData['response']['body']['items']['item'][i]['fcstDate']);
+      time?.add(weatherData['response']['body']['items']['item'][i]['fcstTime']);
       rain?.add(weatherData['response']['body']['items']['item'][i]['fcstValue']);
     }
     for(int i = 24; i<30; i++){
@@ -53,37 +57,55 @@ class _WeatherScreenState extends State<WeatherScreen> {
           children: [
             Text('$cityName'),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                Text('${date?[0]}'),
+                Text('${time?[0]}'),
                 Text('${temp?[0]}'),
                 Text('${rain?[0]}'),
               ],
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                Text('${date?[1]}'),
+                Text('${time?[1]}'),
                 Text('${temp?[1]}'),
                 Text('${rain?[1]}'),
               ],
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                Text('${date?[2]}'),
+                Text('${time?[2]}'),
                 Text('${temp?[2]}'),
                 Text('${rain?[2]}'),
               ],
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                Text('${date?[3]}'),
+                Text('${time?[3]}'),
                 Text('${temp?[3]}'),
                 Text('${rain?[3]}'),
               ],
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                Text('${date?[4]}'),
+                Text('${time?[4]}'),
                 Text('${temp?[4]}'),
                 Text('${rain?[4]}'),
               ],
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                Text('${date?[5]}'),
+                Text('${time?[5]}'),
                 Text('${temp?[5]}'),
                 Text('${rain?[5]}'),
               ],
