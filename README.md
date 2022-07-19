@@ -10,8 +10,8 @@ Flutter 3.0.3
 Android API 33, iOS
 
 ## Files
-> lib/main.dart               어플리케이션을 실행한다.  
-> lib/screens/loading.dart    위치와 날씨 데이터를 로딩하는 화면  
-> lib/screens/weather.dart    날씨를 보여주는 화면  
-> lib/data/my_location.dart   현재 위치 관련 클래스  
-> lib/data/network.dart       http 통신 관련 클래스  
+* lib/main.dart               어플리케이션을 실행한다.  
+* lib/screens/loading.dart    위치와 날씨 데이터를 로딩하는 화면  
+* lib/screens/weather.dart    날씨를 보여주는 화면  
+* lib/data/my_location.dart   현재 위치 관련 클래스  
+* lib/data/network.dart       http 통신 관련 클래스  
