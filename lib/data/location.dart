@@ -1,23 +1,34 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:excel/excel.dart';
-import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'dart:math';
+import 'package:geocoding/geocoding.dart';
 
 class LocationManager {
-  int? myLatitude;
-  int? myLongitude;
+  int? myLatitude; // 격자 x
+  int? myLongitude; // 격자 y
+  String? city; // 지역
 
   Future<void> getMyCurrentLocation() async {
+    // 권한 확인
     LocationPermission permission = await Geolocator.checkPermission();
-
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
+
     try {
+      // 현재 위치 정보를 가져옴
       Position pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
 
+      // 위 경도 -> 지역 이름
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        pos.latitude,
+        pos.longitude,
+        localeIdentifier: 'ko',
+      );
+      city = placemarks[0].subLocality;
+
+      // 위 경도 -> 격자 좌표
       GpsTransfer gt = GpsTransfer(pos.latitude, pos.longitude);
       gt.transfer();
       myLatitude = gt.xLat;
@@ -26,25 +37,6 @@ class LocationManager {
       print(e);
     }
   }
-
-  // Future<Excel> readExcel() async {
-  //   /* Your blah blah code here */
-  //
-  //   ByteData data = await rootBundle.load("assets/location_data.xlsx");
-  //   var bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-  //   var excel = Excel.decodeBytes(bytes);
-  //
-  //   print('========Excel=======');
-  //   for (var table in excel.tables.keys) {
-  //     print(table); //sheet Name
-  //     print(excel.tables[table]?.maxCols);
-  //     print(excel.tables[table]?.maxRows);
-  //     // for (var row in excel.tables[table]!.rows) {
-  //     //   print("$row");
-  //     // }
-  //   }
-  //   return excel;
-  // }
 }
 
 class GpsTransfer {

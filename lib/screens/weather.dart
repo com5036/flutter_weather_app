@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class WeatherScreen extends StatefulWidget {
-  WeatherScreen({this.parsingData});
+  WeatherScreen({this.parsingData, this.cityName});
   final dynamic parsingData;
+  String? cityName;
 
   @override
   State<WeatherScreen> createState() => _WeatherScreenState();
@@ -15,44 +16,48 @@ class _WeatherScreenState extends State<WeatherScreen> {
   List<String>? temp = [];
   List<String>? rain = [];
 
-
-  void update(dynamic weatherData) {
+  void update(dynamic weatherData, String? cityName) {
     /*
     * 0~5 낙뢰
     * 6~11 강수형태
     * 12~17 강수량
     * 18~23 온도
     * 24~29 습도
-    * 30~35~41 바람
-    * ~ 풍향 풍속
+    * 30~41 바람
+    * 42~ 풍향 풍속
     */
-    cityName = '창원';
+    this.cityName = cityName;
 
-    for(int i = 12; i<18; i++){
-      date?.add(weatherData['response']['body']['items']['item'][i]['fcstDate']);
-      time?.add(weatherData['response']['body']['items']['item'][i]['fcstTime']);
-      rain?.add(weatherData['response']['body']['items']['item'][i]['fcstValue']);
+    for (int i = 12; i < 18; i++) {
+      date?.add(
+          weatherData['response']['body']['items']['item'][i]['fcstDate']);
+      time?.add(
+          weatherData['response']['body']['items']['item'][i]['fcstTime']);
+      rain?.add(
+          weatherData['response']['body']['items']['item'][i]['fcstValue']);
     }
-    for(int i = 24; i<30; i++){
-      temp?.add(weatherData['response']['body']['items']['item'][i]['fcstValue']);
+    for (int i = 24; i < 30; i++) {
+      temp?.add(
+          weatherData['response']['body']['items']['item'][i]['fcstValue']);
     }
 
-    print(cityName);
-    print(rain);
-    print(temp);
+    // print(cityName);
+    // print(rain);
+    // print(temp);
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    update(widget.parsingData);
+    update(widget.parsingData, widget.cityName);
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(),
         body: Column(
           children: [
             Text('$cityName'),
