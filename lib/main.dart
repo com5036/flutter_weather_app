@@ -8,8 +8,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Weather App",
+      theme: ThemeData(
+        fontFamily: 'Gmarket_sans',
+        scaffoldBackgroundColor: Colors.white,
+      ),
       home: LoadingPage(),
     );
   }
