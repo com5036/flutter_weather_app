@@ -34,6 +34,8 @@ class _LoadingPageState extends State<LoadingPage> {
     }
     String baseDate = DateFormat('yyyyMMdd').format(currentTime);
     String baseTime = DateFormat('HHmm').format(currentTime);
+    print(baseTime);
+    print(currentTime);
 
     // 기상청으로부터 날씨 정보 수신
     print(
@@ -42,6 +44,13 @@ class _LoadingPageState extends State<LoadingPage> {
       'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?ServiceKey=$serviceKey&pageNo=1&numOfRows=1000&dataType=JSON&base_date=$baseDate&base_time=$baseTime&nx=${myLocation.myLatitude}&ny=${myLocation.myLongitude}',
     );
     var parsingData = await network.getJsonData();
+    String resultCode = parsingData['response']['header']['resultCode'];
+    String resultMsg = parsingData['response']['header']['resultMsg'];
+
+    if (resultCode != '00') {
+      print(resultMsg);
+      return;
+    }
 
     // 로딩 완료시 WeatherScreen 보여줌
     if (!mounted) return;
@@ -50,7 +59,7 @@ class _LoadingPageState extends State<LoadingPage> {
       context,
       MaterialPageRoute(
         builder: (context) => WeatherScreen(
-          parsingData: parsingData,
+          jsonData: parsingData,
           cityName: myLocation.city,
         ),
       ),

@@ -8,25 +8,26 @@ class LocationManager {
   String? city; // 지역
 
   Future<void> getMyCurrentLocation() async {
+    LocationPermission permission;
+
     // 권한 확인
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
+    permission = await Geolocator.requestPermission();
 
     try {
       // 현재 위치 정보를 가져옴
       Position pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
+      print(pos);
 
       // 위 경도 -> 지역 이름
-      List<Placemark> placemarks = await placemarkFromCoordinates(
+      List<Placemark> placeMarks = await placemarkFromCoordinates(
         pos.latitude,
         pos.longitude,
         localeIdentifier: 'ko',
       );
-      city = placemarks[0].subLocality;
+      print(placeMarks[0].subLocality);
+      city = placeMarks[0].subLocality;
 
       // 위 경도 -> 격자 좌표
       GpsTransfer gt = GpsTransfer(pos.latitude, pos.longitude);

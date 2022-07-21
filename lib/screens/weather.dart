@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:weather_app/data/weather_data.dart';
 
 class WeatherScreen extends StatefulWidget {
-  WeatherScreen({this.parsingData, this.cityName});
-  final dynamic parsingData;
+  WeatherScreen({this.jsonData, this.cityName});
+  final dynamic jsonData;
   String? cityName;
 
   @override
@@ -12,56 +13,13 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen> {
   String? cityName;
-  List<String>? date = [];
-  List<String>? time = [];
-  List<String>? temp = [];
-  List<String>? rain = [];
-  List<String>? sky = [];
+  WeatherData? weatherData;
 
-  void update(dynamic weatherData, String? cityName) {
-    /*
-    * 0~5 낙뢰
-    * 6~11 강수형태: 없음(0), 비(1), 비/눈(2), 눈(3), 빗방울(5), 빗방울눈날림(6), 눈날림(7)
-    * 12~17 강수량: mm
-    * 18~23 하늘상태: 맑음(1), 구름많음(3), 흐림(4)
-    * 24~29 온도
-    * 30~41 바람
-    * 42~ 풍향 풍속
-    */
+  void update(dynamic parsingData, String? cityName) {
+    weatherData = WeatherData(parsingData);
+    weatherData?.parseData();
+
     this.cityName = cityName;
-
-    for (int i = 12; i < 18; i++) {
-      date?.add(
-          weatherData['response']['body']['items']['item'][i]['fcstDate']);
-      time?.add(
-          weatherData['response']['body']['items']['item'][i]['fcstTime']);
-      rain?.add(
-          weatherData['response']['body']['items']['item'][i]['fcstValue']);
-    }
-    for (int i = 18; i < 24; i++) {
-      int skyVal = int.parse(
-          weatherData['response']['body']['items']['item'][i]['fcstValue']);
-
-      switch (skyVal) {
-        case 1: // 맑음
-          sky?.add('assets/svg/Sun.svg');
-          break;
-        case 3: // 구름 많음
-          sky?.add('assets/svg/Cloud.svg');
-          break;
-        case 4: // 흐림
-          sky?.add('assets/svg/Cloud.svg');
-          break;
-        default:
-          break;
-      }
-    }
-    for (int i = 24; i < 30; i++) {
-      temp?.add(
-          weatherData['response']['body']['items']['item'][i]['fcstValue']);
-    }
-
-    // print(cityName);
     // print(rain);
     // print(temp);
     // print(sky);
@@ -71,7 +29,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    update(widget.parsingData, widget.cityName);
+    update(widget.jsonData, widget.cityName);
   }
 
   @override
@@ -86,11 +44,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
         body: Container(
           padding: const EdgeInsets.all(20.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Column(
                 children: [
-                  const SizedBox(height: 100.0),
+                  const SizedBox(height: 30.0),
                   Text(
                     '$cityName',
                     style: const TextStyle(fontSize: 30),
@@ -99,41 +58,117 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset(
-                        '${sky?[0]}',
-                        width: 100,
-                        height: 100,
+                      Column(
+                        children: [
+                          SvgPicture.asset(
+                            '${weatherData?.sky?[0]}',
+                            width: 100,
+                            height: 100,
+                          ),
+                          if (weatherData?.rain?[0] != '강수없음')
+                            Text('${weatherData?.rain?[0]}'),
+                        ],
                       ),
                       Text(
-                        '${temp?[0]} °C',
+                        '${weatherData?.temp?[0]} °C',
                         style: const TextStyle(fontSize: 40),
                       ),
+                      SizedBox(width: 30),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(7.5),
+                                child: SvgPicture.asset(
+                                  'assets/svg/Humidity.svg',
+                                  width: 25,
+                                  height: 25,
+                                ),
+                              ),
+                              Text('${weatherData?.humidity?[0]}%')
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svg/Wind.svg',
+                                height: 40,
+                                width: 40,
+                              ),
+                              Text('${weatherData?.windSpeed?[0]} m/s\t'),
+                              Text('${weatherData?.windDir?[0]}°')
+                            ],
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ],
               ),
               const Divider(
-                height: 30,
-                thickness: 2,
+                height: 20,
+                thickness: 3,
               ),
               Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   for (int i = 1; i < 6; i++)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Column(
                       children: [
-                        Text('${time?[i].substring(0, 2)}시'),
-                        Column(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SvgPicture.asset(
-                              '${sky?[i]}',
-                              width: 50,
-                              height: 50,
+                            Text('${weatherData?.time?[i].substring(0, 2)}시'),
+                            Column(
+                              children: [
+                                SvgPicture.asset(
+                                  '${weatherData?.sky?[i]}',
+                                  width: 70,
+                                  height: 70,
+                                ),
+                                if (weatherData?.rain?[i] != '강수없음')
+                                  Text('${weatherData?.rain?[i]}'),
+                              ],
                             ),
-                            Text('${rain?[i]}'),
+                            Text(
+                              '${weatherData?.temp?[i]} °C',
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                            const SizedBox(width: 30),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(7.5),
+                                      child: SvgPicture.asset(
+                                        'assets/svg/Humidity.svg',
+                                        width: 17,
+                                        height: 17,
+                                      ),
+                                    ),
+                                    Text('${weatherData?.humidity?[i]}%'),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/svg/Wind.svg',
+                                      height: 30,
+                                      width: 30,
+                                    ),
+                                    Text(
+                                        '${weatherData?.windSpeed?[i]}m/s ${weatherData?.windDir?[i]}')
+                                  ],
+                                ),
+                              ],
+                            )
                           ],
                         ),
-                        Text('${temp?[i]} °C'),
+                        const Divider(thickness: 1),
                       ],
                     ),
                 ],
