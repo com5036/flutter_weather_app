@@ -90,8 +90,26 @@ class WeatherData {
     }
 
     for (int i = 48; i < 54; i++) {
-      windDir
-          ?.add(jsonData['response']['body']['items']['item'][i]['fcstValue']);
+      int dir = int.parse(
+          jsonData['response']['body']['items']['item'][i]['fcstValue']);
+
+      if ((0 <= dir && dir < 22) || (338 < dir) && (dir <= 360)) {
+        windDir?.add('↑');
+      } else if (22 <= dir && dir <= 67) {
+        windDir?.add('↗');
+      } else if (67 <= dir && dir <= 112) {
+        windDir?.add('→');
+      } else if (112 <= dir && dir <= 157) {
+        windDir?.add('↘');
+      } else if (157 <= dir && dir <= 202) {
+        windDir?.add('↓');
+      } else if (202 <= dir && dir <= 247) {
+        windDir?.add('↙');
+      } else if (247 <= dir && dir <= 292) {
+        windDir?.add('←');
+      } else if (292 <= dir && dir <= 338) {
+        windDir?.add('↖');
+      }
     }
 
     for (int i = 54; i < 60; i++) {

@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Gmarket_sans',
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: LoadingPage(),
+      home: const LoadingPage(),
     );
   }
 }

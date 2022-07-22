@@ -34,11 +34,11 @@ class _LoadingPageState extends State<LoadingPage> {
     }
     String baseDate = DateFormat('yyyyMMdd').format(currentTime);
     String baseTime = DateFormat('HHmm').format(currentTime);
-    print(baseTime);
-    print(currentTime);
+    debugPrint(baseTime);
+    debugPrint(currentTime.toString());
 
     // 기상청으로부터 날씨 정보 수신
-    print(
+    debugPrint(
         'get weather: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?ServiceKey=$serviceKey&pageNo=1&numOfRows=1000&dataType=JSON&base_date=$baseDate&base_time=$baseTime&nx=${myLocation.myLatitude}&ny=${myLocation.myLongitude}');
     Network network = Network(
       'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?ServiceKey=$serviceKey&pageNo=1&numOfRows=1000&dataType=JSON&base_date=$baseDate&base_time=$baseTime&nx=${myLocation.myLatitude}&ny=${myLocation.myLongitude}',
@@ -48,7 +48,7 @@ class _LoadingPageState extends State<LoadingPage> {
     String resultMsg = parsingData['response']['header']['resultMsg'];
 
     if (resultCode != '00') {
-      print(resultMsg);
+      debugPrint(resultMsg);
       return;
     }
 

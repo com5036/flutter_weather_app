@@ -1,3 +1,6 @@
+// ignore_for_file: constant_identifier_names
+
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math';
 import 'package:geocoding/geocoding.dart';
@@ -8,17 +11,18 @@ class LocationManager {
   String? city; // 지역
 
   Future<void> getMyCurrentLocation() async {
-    LocationPermission permission;
-
     // 권한 확인
-    permission = await Geolocator.requestPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
 
     try {
       // 현재 위치 정보를 가져옴
       Position pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      print(pos);
+      debugPrint(pos.toString());
 
       // 위 경도 -> 지역 이름
       List<Placemark> placeMarks = await placemarkFromCoordinates(
@@ -26,8 +30,13 @@ class LocationManager {
         pos.longitude,
         localeIdentifier: 'ko',
       );
-      print(placeMarks[0].subLocality);
-      city = placeMarks[0].subLocality;
+      debugPrint(placeMarks.toString());
+      city = placeMarks[0].locality! +
+          ' ' +
+          placeMarks[0].subLocality! +
+          ' ' +
+          placeMarks[0].thoroughfare!;
+      city?.trim();
 
       // 위 경도 -> 격자 좌표
       GpsTransfer gt = GpsTransfer(pos.latitude, pos.longitude);
@@ -35,7 +44,7 @@ class LocationManager {
       myLatitude = gt.xLat;
       myLongitude = gt.yLon;
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 }
@@ -60,14 +69,13 @@ class GpsTransfer {
     const double XO = 43; // 기준점 X좌표(GRID)
     const double YO = 136; // 기1준점 Y좌표(GRID)
 
-    double DEGRAD = pi / 180.0;
-    double RADDEG = 180.0 / pi;
+    double degrad = pi / 180.0;
 
     double re = RE / GRID;
-    double slat1 = SLAT1 * DEGRAD;
-    double slat2 = SLAT2 * DEGRAD;
-    double olon = OLON * DEGRAD;
-    double olat = OLAT * DEGRAD;
+    double slat1 = SLAT1 * degrad;
+    double slat2 = SLAT2 * degrad;
+    double olon = OLON * degrad;
+    double olat = OLAT * degrad;
 
     double sn = tan(pi * 0.25 + slat2 * 0.5) / tan(pi * 0.25 + slat1 * 0.5);
     sn = log(cos(slat1) / cos(slat2)) / log(sn);
@@ -76,9 +84,9 @@ class GpsTransfer {
     double ro = tan(pi * 0.25 + olat * 0.5);
     ro = re * sf / pow(ro, sn);
 
-    double ra = tan(pi * 0.25 + lat! * DEGRAD * 0.5);
+    double ra = tan(pi * 0.25 + lat! * degrad * 0.5);
     ra = re * sf / pow(ra, sn);
-    double theta = lon! * DEGRAD - olon;
+    double theta = lon! * degrad - olon;
     if (theta > pi) theta -= 2.0 * pi;
     if (theta < -pi) theta += 2.0 * pi;
     theta *= sn;
